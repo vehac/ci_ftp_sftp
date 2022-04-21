@@ -8,7 +8,7 @@ Docker - CodeIgniter 3.1.13 (PHP 7.1) - FTP - SFTP
 - En la ruta `docker/php` se encuentra el archivo `init.sh` donde se asigna permisos a las carpetas `cache`, `temp`, `ci_ftp`, `ci_ftp_passwd` y `ci_sftp` cuando se levante el contendor
 - Se agrega el archivo `.htaccess` donde se coloca regla para omitir el index.php de las url's
 - Se modifica el archivo `application/config/config.php` para omitir el `index.php` de las url's en `['index_page']`, permitir cargar la carpeta `vendor` en `['composer_autoload']` e indicar como lenguaje el español en `['language']`
-- Se agrega la ruta de temporales y las credenciales para conectar al ftp y sftp en `application/config/constants.php`
+- Se agrega la ruta de temporales y las credenciales para conectar al FTP y SFTP en `application/config/constants.php`
 
 ## Docker
 - Para la primera vez que se levanta el proyecto con docker o se cambie los archivos de docker ejecutar:
@@ -66,5 +66,5 @@ pass: pasS123*
 ```
 - Para probar funcionalidad en el SFTP, ingresar al contenedor con php (webserver) y dentro ejecutar el siguiente comando:
 ```bash
-php index.php cron/work_ftp_sftp work_in_ftp
+php index.php cron/work_ftp_sftp work_in_sftp
 ```
