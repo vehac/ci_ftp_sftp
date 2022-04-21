@@ -1,0 +1,94 @@
+version : "3" 
+services :
+    webserver :
+        build :
+            context : ./docker/php
+            dockerfile : Dockerfile 
+        container_name : php_ci_ftp
+        ports : 
+            - 8282:80
+        networks :
+            backend-net :
+                ipv4_address : 10.22.21.19
+        links :
+            - memcached
+            - mongodb
+            - database
+        depends_on :
+            - memcached
+            - mongodb
+            - database
+        volumes :
+            - .:/var/www/html
+        command : sh /var/www/html/docker/php/init.sh
+    database :
+        container_name : db_ci_ftp
+        image : mariadb
+        ports :
+            - "9207:3306"
+        networks :
+            backend-net :
+                ipv4_address : 10.22.21.20
+        environment :
+            - MYSQL_ROOT_PASSWORD=7*DBci369
+            - MYSQL_DATABASE=db_ci
+    memcached :
+        container_name : memcached_ci_ftp
+        image : memcached:alpine
+        ports :
+            - "9211:11211"
+        networks :
+            backend-net :
+                ipv4_address : 10.22.21.21
+    mongodb :
+        container_name : mongodb_ci_ftp
+        image : bitnami/mongodb:latest
+        ports :
+            - "24019:27017"
+        networks :
+            backend-net :
+                ipv4_address : 10.22.21.22
+        environment :
+            - MONGODB_ROOT_PASSWORD=toor
+            - MONGODB_USERNAME=root
+            - MONGODB_PASSWORD=root
+            - MONGODB_DATABASE=mbd_ci
+    ftp : 
+        container_name : ftp_ci_ftp
+        image: stilliard/pure-ftpd
+        ports:
+            - "8221:21"
+            - "13000-13009:13000-13009"
+        environment:
+            PUBLICHOST : 10.22.21.23
+            FTP_USER_NAME : uadmin
+            FTP_USER_PASS : pasS123*
+            FTP_USER_HOME : /home/diruadmin
+            FTP_PASSIVE_PORTS : "13000:13009"
+        volumes:
+            - ./upload/ci_ftp:/home/diruadmin/ci_ftp/
+            - ./upload/ci_ftp_passwd:/etc/pure-ftpd/passwd
+        networks :
+            backend-net :
+                ipv4_address : 10.22.21.23
+        
+    sftp :
+        container_name : sftp_ci_ftp
+        image : atmoz/sftp
+        volumes:
+            - ./upload/ci_sftp:/home/admin/ci_sftp
+        ports:
+            - "8222:22"
+        networks :
+            backend-net :
+                ipv4_address : 10.22.21.24
+        command: admin:pasS123*:1000
+        
+        
+networks :
+    backend-net :
+        driver : bridge
+        ipam :
+            driver : default
+            config :
+                - subnet : 10.22.21.0/26
